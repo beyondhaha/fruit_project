@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FruitDAO {
     //获取指定页码上的库存列表信息，每页显示5条
-    List<Fruit> getFruitList(Integer pageNo);
+    List<Fruit> getFruitList(String keyword, Integer pageNo);
 
     Fruit getFruitByFid(Integer fid);
 
@@ -15,4 +15,6 @@ public interface FruitDAO {
     void deleteFruit(int fid);
 
     void addFruit(Fruit fruit);
+
+    int getFruitCount(String keyword);
 }
