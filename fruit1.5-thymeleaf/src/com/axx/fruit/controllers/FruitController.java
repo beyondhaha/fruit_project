@@ -1,4 +1,4 @@
-package com.axx.fruit.servlet;
+package com.axx.fruit.controllers;
 
 import com.axx.fruit.dao.FruitDAO;
 import com.axx.fruit.dao.impl.FruitDAOImpl;
@@ -16,36 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-@WebServlet("/fruit.do")
-public class FruitServlet extends ViewBaseServlet {
+public class FruitController extends ViewBaseServlet {
 
     private FruitDAO fruitDAO = new FruitDAOImpl();
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String operate = req.getParameter("operate");
-        if (StringUtil.isEmpty(operate)) {
-            operate = "index";
-        }
-
-        Method[] methods = this.getClass().getDeclaredMethods();
-        for (Method m : methods) {
-            String methodName = m.getName();
-            if (operate.equals(methodName)) {
-                try {
-                    m.invoke(this, req, resp);
-                    return;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        throw new RuntimeException("operate值非法");
-    }
-
 
     private void index(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
