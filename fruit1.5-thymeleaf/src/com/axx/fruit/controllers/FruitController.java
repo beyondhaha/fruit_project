@@ -6,41 +6,27 @@ import com.axx.fruit.pojo.Fruit;
 import com.axx.myssm.myspringmvc.ViewBaseServlet;
 import com.axx.myssm.utils.StringUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.util.List;
 
-public class FruitController extends ViewBaseServlet {
+public class FruitController {
 
     private FruitDAO fruitDAO = new FruitDAOImpl();
 
-    private void index(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private String index(String oper, String keyword, Integer pageNo, HttpServletRequest req) {
         HttpSession session = req.getSession();
-        Integer pageNo = 1;
 
-        String oper = req.getParameter("oper");
-
-        String keyword = null;
         if (StringUtil.isNotEmpty(oper) && "search".equals(oper)) {
             //表单查询发出的请求，包含查询条件
             pageNo = 1;
-            keyword = req.getParameter("keyword");
             if (StringUtil.isEmpty(keyword)) {
                 keyword = "";
             }
             session.setAttribute("keyword", keyword);
         } else {
             //不是表单查询发出的请求
-            String pageStr = req.getParameter("pageNo");
-            if (StringUtil.isNotEmpty(pageStr)) {
-                pageNo = Integer.parseInt(pageStr);
-            }
             Object keywordobj = session.getAttribute("keyword");
             if (keywordobj != null) {
                 keyword = (String) keywordobj;
@@ -49,7 +35,6 @@ public class FruitController extends ViewBaseServlet {
             }
         }
 
-
         int fruitCount = fruitDAO.getFruitCount(keyword);
         List<Fruit> fruitList = fruitDAO.getFruitList(keyword, pageNo);
 
@@ -57,57 +42,42 @@ public class FruitController extends ViewBaseServlet {
         session.setAttribute("pageCount", (fruitCount + 4) / 5);
         session.setAttribute("fruitList", fruitList);
 
-        super.processTemplate("index", req, resp);
+        //super.processTemplate("index", req, resp);
+        return "index";
     }
 
-    private void add(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private String add(String f_name, Integer price, Integer f_count, String remark) {
 
-        String f_name = req.getParameter("fname");
-        String price = req.getParameter("price");
-        int f_price = Integer.parseInt(price);
-        String fcount = req.getParameter("fcount");
-        int f_count = Integer.parseInt(fcount);
-        String remark = req.getParameter("remark");
+        fruitDAO.addFruit(new Fruit(0, f_name, price, f_count, remark));
 
-        fruitDAO.addFruit(new Fruit(0, f_name, f_price, f_count, remark));
-
-        resp.sendRedirect("fruit.do");
+        //resp.sendRedirect("fruit.do");
+        return "redirect:fruit.do";
     }
 
-    private void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String f_name = req.getParameter("fname");
-        String price = req.getParameter("price");
-        int f_price = Integer.parseInt(price);
-        String fcount = req.getParameter("fcount");
-        int f_count = Integer.parseInt(fcount);
-        String remark = req.getParameter("remark");
-        String fid = req.getParameter("fid");
-        int f_id = Integer.parseInt(fid);
+    private String update(String f_name, Integer price, Integer f_count, String remark, Integer f_id) {
+        fruitDAO.updateFruit(new Fruit(f_id, f_name, price, f_count, remark));
 
-        fruitDAO.updateFruit(new Fruit(f_id, f_name, f_price, f_count, remark));
-
-        resp.sendRedirect("fruit.do");
+        //资源跳转
+        //resp.sendRedirect("fruit.do");
+        return "redirect:fruit.do";
     }
 
-    private void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String fidstr = req.getParameter("fid");
-        System.out.println(fidstr);
-        if (StringUtil.isNotEmpty(fidstr)) {
-            int fid = Integer.parseInt(fidstr);
+    private String delete(Integer fid) {
+        if (fid != null) {
             fruitDAO.deleteFruit(fid);
+            //resp.sendRedirect("fruit.do");
+            return "redirect:fruit.do";
         }
-
-        resp.sendRedirect("fruit.do");
+        return "error";
     }
 
-    private void edit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String fid = req.getParameter("fid");
-
-        if (StringUtil.isNotEmpty(fid)) {
-            int f_id = Integer.parseInt(fid);
-            Fruit fruit = fruitDAO.getFruitByFid(f_id);
+    private String edit(Integer fid, HttpServletRequest req) {
+        if (fid != null) {
+            Fruit fruit = fruitDAO.getFruitByFid(fid);
             req.setAttribute("fruit", fruit);
-            super.processTemplate("edit", req, resp);
+            //super.processTemplate("edit", req, resp);
+            return "edit";
         }
+        return "error";
     }
 }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,11 @@ public class DispatcherServlet extends ViewBaseServlet {
     private Map<String, Object> beanMap = new HashMap<>();
 
     public DispatcherServlet() {
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
         try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("applicationContext.xml");
             //1、创建DocumentBuilderFactory
@@ -85,14 +91,32 @@ public class DispatcherServlet extends ViewBaseServlet {
         }
 
         try {
-            Method method = controllerBeanObj.getClass().getDeclaredMethod("operate", HttpServletRequest.class, HttpServletResponse.class);
-            if (method != null) {
-                method.invoke(controllerBeanObj, req, resp);
-            } else {
-                throw new RuntimeException("operate值非法");
+            //通过operate获取到相应的方法
+            Method[] methods = controllerBeanObj.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (operate.equals(method.getName())) {
+                    //获取当前方法的参数，返回参数数组
+                    Parameter[] parameters = method.getParameters();
+
+                    //调用controller组件中对应的方法
+                    method.setAccessible(true);
+                    Object returnObj = method.invoke(controllerBeanObj, req);
+
+                    //视图处理
+                    String methodReturnStr = (String) returnObj;
+                    //重定向
+                    if (methodReturnStr.startsWith("redirect:")) {
+                        String redirectStr = methodReturnStr.substring("redirect:".length());
+                        resp.sendRedirect(redirectStr);
+                    } else {
+                        //thymeleaf模板渲染
+                        super.processTemplate(methodReturnStr, req, resp);
+                    }
+                }
             }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            /*else {
+                throw new RuntimeException("operate值非法");
+            }*/
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
