@@ -17,6 +17,9 @@ public class FruitController {
 
     private String index(String oper, String keyword, Integer pageNo, HttpServletRequest req) {
         HttpSession session = req.getSession();
+        if (pageNo == null) {
+            pageNo = 1;
+        }
 
         if (StringUtil.isNotEmpty(oper) && "search".equals(oper)) {
             //表单查询发出的请求，包含查询条件
@@ -46,16 +49,16 @@ public class FruitController {
         return "index";
     }
 
-    private String add(String f_name, Integer price, Integer f_count, String remark) {
+    private String add(String fname, Integer price, Integer fcount, String remark) {
 
-        fruitDAO.addFruit(new Fruit(0, f_name, price, f_count, remark));
+        fruitDAO.addFruit(new Fruit(0, fname, price, fcount, remark));
 
         //resp.sendRedirect("fruit.do");
         return "redirect:fruit.do";
     }
 
-    private String update(String f_name, Integer price, Integer f_count, String remark, Integer f_id) {
-        fruitDAO.updateFruit(new Fruit(f_id, f_name, price, f_count, remark));
+    private String update(String fname, Integer price, Integer fcount, String remark, Integer fid) {
+        fruitDAO.updateFruit(new Fruit(fid, fname, price, fcount, remark));
 
         //资源跳转
         //resp.sendRedirect("fruit.do");

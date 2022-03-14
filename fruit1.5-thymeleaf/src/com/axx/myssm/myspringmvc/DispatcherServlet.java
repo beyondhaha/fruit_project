@@ -97,10 +97,35 @@ public class DispatcherServlet extends ViewBaseServlet {
                 if (operate.equals(method.getName())) {
                     //获取当前方法的参数，返回参数数组
                     Parameter[] parameters = method.getParameters();
+                    //声明一个Object数组用来承载参数的值
+                    Object[] parameterValues = new Object[parameters.length];
+                    for (int i = 0; i < parameters.length; i++) {
+                        //遍历参数的名字，通过参数名获取参数值并保存
+                        Parameter parameter = parameters[i];
+                        String parameterName = parameter.getName();
+
+                        if ("req".equals(parameterName)) {
+                            parameterValues[i] = req;
+                        } else if ("resp".equals(parameterName)) {
+                            parameterValues[i] = resp;
+                        } else if ("session".equals(parameterName)) {
+                            parameterValues[i] = req.getSession();
+                        } else {
+                            String parameterValue = req.getParameter(parameterName);
+                            String typeName = parameter.getType().getTypeName();
+                            if ("java.lang.Integer".equals(typeName) && parameterValue != null) {
+                                parameterValues[i] = Integer.parseInt(parameterValue);
+                            } else {
+                                parameterValues[i] = parameterValue;
+                            }
+
+                        }
+
+                    }
 
                     //调用controller组件中对应的方法
                     method.setAccessible(true);
-                    Object returnObj = method.invoke(controllerBeanObj, req);
+                    Object returnObj = method.invoke(controllerBeanObj, parameterValues);
 
                     //视图处理
                     String methodReturnStr = (String) returnObj;
