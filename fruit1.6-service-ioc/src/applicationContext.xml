@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <beans>
+    <bean id="fruitDAO" class="com.axx.fruit.dao.impl.FruitDAOImpl"></bean>
+    <bean id="fruitService" class="com.axx.fruit.service.impl.FruitServiceImpl"></bean>
     <bean id="fruit" class="com.axx.fruit.controllers.FruitController"></bean>
 </beans>
