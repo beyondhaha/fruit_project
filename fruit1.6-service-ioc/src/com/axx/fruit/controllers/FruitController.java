@@ -1,7 +1,7 @@
 package com.axx.fruit.controllers;
 
-import com.axx.fruit.dao.FruitDAO;
-import com.axx.fruit.dao.impl.FruitDAOImpl;
+import com.axx.fruit.service.FruitService;
+import com.axx.fruit.service.impl.FruitServiceImpl;
 import com.axx.fruit.pojo.Fruit;
 import com.axx.myssm.utils.StringUtil;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FruitController {
 
-    private FruitDAO fruitDAO = new FruitDAOImpl();
+    private FruitService fruitService = new FruitServiceImpl();
 
     private String index(String oper, String keyword, Integer pageNo, HttpServletRequest req) {
         HttpSession session = req.getSession();
@@ -37,11 +37,11 @@ public class FruitController {
             }
         }
 
-        int fruitCount = fruitDAO.getFruitCount(keyword);
-        List<Fruit> fruitList = fruitDAO.getFruitList(keyword, pageNo);
+        int pageCount = fruitService.getPageCount(keyword);
+        List<Fruit> fruitList = fruitService.getFruitList(keyword, pageNo);
 
         session.setAttribute("pageNo", pageNo);
-        session.setAttribute("pageCount", (fruitCount + 4) / 5);
+        session.setAttribute("pageCount", pageCount);
         session.setAttribute("fruitList", fruitList);
 
         //super.processTemplate("index", req, resp);
@@ -50,14 +50,14 @@ public class FruitController {
 
     private String add(String fname, Integer price, Integer fcount, String remark) {
 
-        fruitDAO.addFruit(new Fruit(0, fname, price, fcount, remark));
+        fruitService.addFruit(new Fruit(0, fname, price, fcount, remark));
 
         //resp.sendRedirect("fruit.do");
         return "redirect:fruit.do";
     }
 
     private String update(String fname, Integer price, Integer fcount, String remark, Integer fid) {
-        fruitDAO.updateFruit(new Fruit(fid, fname, price, fcount, remark));
+        fruitService.updateFruit(new Fruit(fid, fname, price, fcount, remark));
 
         //资源跳转
         //resp.sendRedirect("fruit.do");
@@ -66,7 +66,7 @@ public class FruitController {
 
     private String delete(Integer fid) {
         if (fid != null) {
-            fruitDAO.deleteFruit(fid);
+            fruitService.deleteFruit(fid);
             //resp.sendRedirect("fruit.do");
             return "redirect:fruit.do";
         }
@@ -75,7 +75,7 @@ public class FruitController {
 
     private String edit(Integer fid, HttpServletRequest req) {
         if (fid != null) {
-            Fruit fruit = fruitDAO.getFruitByFid(fid);
+            Fruit fruit = fruitService.getFruitByFid(fid);
             req.setAttribute("fruit", fruit);
             //super.processTemplate("edit", req, resp);
             return "edit";

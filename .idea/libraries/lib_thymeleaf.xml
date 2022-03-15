@@ -1,9 +1,16 @@
 <component name="libraryTable">
   <library name="lib_thymeleaf">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/fruit1.4-thymeleaf/lib_thymeleaf" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/attoparser-2.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/javassist-3.20.0-GA.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/log4j-1.2.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/ognl-3.1.26.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/slf4j-api-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/slf4j-log4j12-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/thymeleaf-3.0.12.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/fruit1.5-thymeleaf/lib_thymeleaf/unbescape-1.1.6.RELEASE.jar!/" />
     </CLASSES>
+    <JAVADOC />
     <SOURCES />
-    <jarDirectory url="file://$PROJECT_DIR$/fruit1.4-thymeleaf/lib_thymeleaf" recursive="false" />
   </library>
 </component>

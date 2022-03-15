@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery测试</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style type="text/css">
+        .table {
+            width: 100%;
+            height: 100%;
+            border: none;
+            font-family: Arial;
+        }
+
+        input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <table class="table" border="1" align="center">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>配置要求</th>
+            <th>主要技术参数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="clo">
+            <td class="td">1</td>
+            <td><input placeholder="添加配置要求"/></td>
+            <td><input placeholder="添加主要技术参数"/></td>
+        </tr>
+        <tr>
+            <td class="td">2</td>
+            <td><input placeholder="添加配置要求"/></td>
+            <td><input placeholder="添加主要技术参数"/></td>
+        </tr>
+        </tbody>
+    </table>
+    <button id="add">增加一行</button>
+    <button id="del" onclick="del()">删除一行</button>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#add").click(function () {
+            var $td = $("#clo").clone();
+            $(".table").append($td);
+            var i = 1;
+            $(".td").each(function () {
+                $(this).html(i++);
+            });
+            $("table tr:last").find(":input").val("");
+        });
+    });
+
+    function del() {
+        $("table tr:not(:first):not(:first):last").remove();//移除最后一行,并且保留前两行
+    }
+</script>
+</html>

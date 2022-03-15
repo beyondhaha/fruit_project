@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/fruit1.5-thymeleaf/fruit1.5-thymeleaf.iml" filepath="$PROJECT_DIR$/fruit1.5-thymeleaf/fruit1.5-thymeleaf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fruit1.6-service-ioc/fruit1.6-service-ioc.iml" filepath="$PROJECT_DIR$/fruit1.6-service-ioc/fruit1.6-service-ioc.iml" />
     </modules>
   </component>
 </project>

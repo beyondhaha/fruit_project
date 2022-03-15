@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="fruit1.6-service-ioc:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/fruit1_6_service_ioc_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="fruit1.6-service-ioc" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="mysql-connector-java-5.1.45-bin" />
+          <element id="library" level="project" name="lib_thymeleaf" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="fruit1.6-service-ioc/web/Web" />
+    </root>
+  </artifact>
+</component>
