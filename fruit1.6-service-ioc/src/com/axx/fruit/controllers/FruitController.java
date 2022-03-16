@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FruitController {
 
-    private FruitService fruitService = new FruitServiceImpl();
+    private FruitService fruitService = null;
 
     private String index(String oper, String keyword, Integer pageNo, HttpServletRequest req) {
         HttpSession session = req.getSession();

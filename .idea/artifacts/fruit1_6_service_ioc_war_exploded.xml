@@ -9,6 +9,8 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="mysql-connector-java-5.1.45-bin" />
           <element id="library" level="project" name="lib_thymeleaf" />
+          <element id="library" level="application_server_libraries" name="Tomcat 9.0.29" />
+          <element id="library" level="project" name="jsp-api" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="fruit1.6-service-ioc/web/Web" />

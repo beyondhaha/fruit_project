@@ -2,6 +2,11 @@
 
 <beans>
     <bean id="fruitDAO" class="com.axx.fruit.dao.impl.FruitDAOImpl"></bean>
-    <bean id="fruitService" class="com.axx.fruit.service.impl.FruitServiceImpl"></bean>
-    <bean id="fruit" class="com.axx.fruit.controllers.FruitController"></bean>
+    <bean id="fruitService" class="com.axx.fruit.service.impl.FruitServiceImpl">
+        <!--property标签用来表示属性：name表示属性名，ref表示引用其他bean的id值-->
+        <property name="fruitDAO" ref="fruitDAO"></property>
+    </bean>
+    <bean id="fruit" class="com.axx.fruit.controllers.FruitController">
+        <property name="fruitService" ref="fruitService"></property>
+    </bean>
 </beans>
