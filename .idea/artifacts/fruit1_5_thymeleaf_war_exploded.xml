@@ -8,7 +8,6 @@
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="lib_thymeleaf" />
-          <element id="library" level="project" name="mysql-connector-java-5.1.45-bin" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="fruit1.5-thymeleaf/web/Web" />

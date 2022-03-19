@@ -1,4 +1,4 @@
-package com.axx.myssm.io;
+package com.axx.myssm.ioc;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

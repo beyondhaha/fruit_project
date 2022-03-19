@@ -1,5 +1,7 @@
 package com.axx.myssm.basedao;
 
+import com.axx.myssm.utils.ConnUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -34,35 +36,15 @@ public abstract class BaseDAO<T> {
             entityClass = Class.forName(actualType.getTypeName());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new DAOException("BaseDAO 构造方法出错了");
         }
     }
 
     protected Connection getConn() {
-        try {
-            //1.加载驱动
-            Class.forName(DRIVER);
-            //2.通过驱动管理器获取连接对象
-            return DriverManager.getConnection(URL, USER, PWD);
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return ConnUtil.getConn();
     }
 
     protected void close(ResultSet rs, PreparedStatement psmt, Connection conn) {
-        try {
-            if (rs != null) {
-                rs.close();
-            }
-            if (psmt != null) {
-                psmt.close();
-            }
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     //给预处理命令对象设置参数
@@ -78,8 +60,9 @@ public abstract class BaseDAO<T> {
     protected int executeUpdate(String sql, Object... params) {
         boolean insertFlag = false;
         insertFlag = sql.trim().toUpperCase().startsWith("INSERT");
+        conn = getConn();
+
         try {
-            conn = getConn();
             if (insertFlag) {
                 psmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } else {
@@ -98,24 +81,18 @@ public abstract class BaseDAO<T> {
             return count;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close(rs, psmt, conn);
+            throw new DAOException("BaseDAO executeUpdate出错了");
         }
-        return 0;
     }
 
     //通过反射技术给obj对象的property属性赋propertyValue值
-    private void setValue(Object obj, String property, Object propertyValue) {
+    private void setValue(Object obj, String property, Object propertyValue) throws IllegalAccessException, NoSuchFieldException {
         Class clazz = obj.getClass();
-        try {
-            //获取property这个字符串对应的属性名 ， 比如 "fid"  去找 obj对象中的 fid 属性
-            Field field = clazz.getDeclaredField(property);
-            if (field != null) {
-                field.setAccessible(true);
-                field.set(obj, propertyValue);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        //获取property这个字符串对应的属性名 ， 比如 "fid"  去找 obj对象中的 fid 属性
+        Field field = clazz.getDeclaredField(property);
+        if (field != null) {
+            field.setAccessible(true);
+            field.set(obj, propertyValue);
         }
     }
 
@@ -144,8 +121,7 @@ public abstract class BaseDAO<T> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            close(rs, psmt, conn);
+            throw new DAOException("executeComplexQuery出错了");
         }
         return null;
     }
@@ -175,14 +151,9 @@ public abstract class BaseDAO<T> {
                 }
                 return entity;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, psmt, conn);
+            throw new DAOException("BaseDAO load出错了");
         }
         return null;
     }
@@ -214,14 +185,9 @@ public abstract class BaseDAO<T> {
                 }
                 list.add(entity);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, psmt, conn);
+            throw new DAOException("BaseDAO executeQuery出错了");
         }
         return list;
     }

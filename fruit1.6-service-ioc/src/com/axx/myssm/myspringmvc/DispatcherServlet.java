@@ -1,7 +1,6 @@
 package com.axx.myssm.myspringmvc;
 
-import com.axx.myssm.io.BeanFactory;
-import com.axx.myssm.io.ClassPathXmlApplicationContext;
+import com.axx.myssm.ioc.BeanFactory;
 import com.axx.myssm.utils.StringUtil;
 
 import javax.servlet.ServletException;
@@ -9,7 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -24,14 +22,18 @@ public class DispatcherServlet extends ViewBaseServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        //初始化bean工厂类
-        beanFactory = new ClassPathXmlApplicationContext();
+        //IOC容器在servlet上下文被初始化是就应该被创建,因此通过监听器创建后保存在上下文中，控制器直接获取
+        //beanFactory = new ClassPathXmlApplicationContext();
+        Object beanFactoryObj = getServletContext().getAttribute("beanFactory");
+        if (beanFactoryObj != null) {
+            beanFactory = (BeanFactory) beanFactoryObj;
+        } else {
+            throw new RuntimeException("IOC容器获取失败");
+        }
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html;charset=utf-8");
 
         //获取servletPath：/hello.do
         String servletPath = req.getServletPath();
@@ -64,6 +66,7 @@ public class DispatcherServlet extends ViewBaseServlet {
                         Parameter parameter = parameters[i];
                         String parameterName = parameter.getName();
 
+                        //判断参数是否为特殊类型
                         if ("req".equals(parameterName)) {
                             parameterValues[i] = req;
                         } else if ("resp".equals(parameterName)) {
@@ -100,10 +103,9 @@ public class DispatcherServlet extends ViewBaseServlet {
             /*else {
                 throw new RuntimeException("operate值非法");
             }*/
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            throw new DispatcherServletException("DispatcherServlet出错了");
         }
     }
 }
