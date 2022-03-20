@@ -12,8 +12,13 @@ import javax.servlet.annotation.WebListener;
 public class ContextLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        BeanFactory beanFactory = new ClassPathXmlApplicationContext();
+        //1、获取servletContext对象
         ServletContext servletContext = sce.getServletContext();
+        //2、获取上下文的初始化参数
+        String path = servletContext.getInitParameter("contextConfigLocation");
+        //3、创建IOC容器
+        BeanFactory beanFactory = new ClassPathXmlApplicationContext();
+        //4、将IOC容器保存到application作用域
         servletContext.setAttribute("beanFactory", beanFactory);
     }
 

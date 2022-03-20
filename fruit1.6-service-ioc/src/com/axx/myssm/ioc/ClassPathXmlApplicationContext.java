@@ -1,5 +1,6 @@
 package com.axx.myssm.ioc;
 
+import com.axx.myssm.utils.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,8 +20,15 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     private Map<String, Object> beanMap = new HashMap<>();
 
     public ClassPathXmlApplicationContext() {
+        this("applicationContext.xml");
+    }
+
+    public ClassPathXmlApplicationContext(String path) {
+        if (StringUtil.isEmpty(path)) {
+            throw new RuntimeException("IOC容器的配置文件没有指定...");
+        }
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("applicationContext.xml");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
             //1、创建DocumentBuilderFactory
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             //2、创建DocumentBuilder对象
@@ -49,7 +57,7 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
                     for (int j = 0; j < beanChildNodeList.getLength(); j++) {
                         Node beanChildNode = beanChildNodeList.item(j);
                         if (beanChildNode.getNodeType() == Node.ELEMENT_NODE && "property".equals(beanChildNode.getNodeName())) {
-                            Element propertyElement= (Element) beanChildNode;
+                            Element propertyElement = (Element) beanChildNode;
                             String propertyName = propertyElement.getAttribute("name");
                             String propertyRef = propertyElement.getAttribute("ref");
                             //1、找到propertyRef对应的示例
@@ -59,7 +67,7 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
                             Class beanClazz = beanObj.getClass();
                             Field propertyField = beanClazz.getDeclaredField(propertyName);
                             propertyField.setAccessible(true);
-                            propertyField.set(beanObj,refObj);
+                            propertyField.set(beanObj, refObj);
                         }
 
                     }
